@@ -46,26 +46,44 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDTO getUserByEmail(String email) {
-        return null;
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User with email " + email + " not found"));
+        return UserMapper.toDTO(user);
     }
 
     @Override
     public boolean authenticateUser(String email, String password) {
-        return false;
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User with email " + email + " not found"));
+        return passwordEncoder.matches(password, user.getPassword());
     }
 
     @Override
     public boolean updatePassword(String email, UpdatePasswordRequestDTO updatePasswordRequestDTO) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User with email " + email + " not found"));
+        if (passwordEncoder.matches(updatePasswordRequestDTO.getOldPassword(), user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(updatePasswordRequestDTO.getNewPassword()));
+            userRepository.save(user);
+            return true;
+        }
         return false;
     }
 
     @Override
     public void updateRole(String email, Role role) {
-
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User with email " + email + " not found"));
+        user.setRole(role);
+        userRepository.save(user);
     }
 
     @Override
     public UserResponseDTO deleteUser(String email) {
-        return null;
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User with email " + email + " not found"));
+        UserResponseDTO deletedUser = UserMapper.toDTO(user);
+        userRepository.delete(user);
+        return deletedUser;
     }
 }
