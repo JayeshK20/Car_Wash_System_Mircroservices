@@ -22,7 +22,7 @@ public class UserMapper {
                 .name(user.getName())
                 .email(user.getEmail())
                 .password(user.getPassword())
-                .role(user.getRole().name())
+                .role(user.getRole())
                 .build();
     }
 }

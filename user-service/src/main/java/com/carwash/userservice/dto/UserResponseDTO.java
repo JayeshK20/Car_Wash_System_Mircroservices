@@ -1,5 +1,6 @@
 package com.carwash.userservice.dto;
 
+import com.carwash.userservice.utility.Role;
 import lombok.*;
 
 @Getter
@@ -13,6 +14,6 @@ public class UserResponseDTO {
     private String name;
     private String email;
     private String password;
-    private String role;
+    private Role role;
 
 }
